@@ -1,0 +1,46 @@
+PROGRAM PLC_PRG
+VAR
+	call_up: ARRAY [0..4] OF BOOL;
+	call_down: ARRAY [0..4] OF BOOL;
+	stages: ARRAY [0..5] OF BOOL;
+	
+	TON_0: TON;
+	TON_1: TON;
+	TON_2: TON;
+	current_stage: INT := 0;
+	goal_stage: INT;
+	i: INT;
+	dir: INT;
+	level: INT;
+	stage_1: BOOL;
+	stage_2: BOOL;
+	stage_3: BOOL;
+	stage_4: BOOL;
+	stage_5: BOOL;
+	start: BOOL;
+	counter: INT;
+	j: INT;
+	counter2: INT;
+	run: BOOL := FALSE;
+	open_doors: BOOL;
+	stop_elevator: BOOL;
+	stage_1_1: BOOL;
+	stage_2_1: BOOL;
+	stage_3_1: BOOL;
+	stage_4_1: BOOL;
+	stage_5_1: BOOL;
+	stage_1_2: BOOL;
+	stage_2_2: BOOL;
+	stage_3_2: BOOL;
+	stage_4_2: BOOL;
+	stage_5_2: BOOL;
+	left_door: INT;
+	counter3: INT;
+	right_door_move: BOOL;
+	doors_move: BOOL;
+	right_door: INT;
+	sbr: BOOL;
+	cond: INT;
+	stage: INT;
+	prev_dir: INT;
+END_VAR
