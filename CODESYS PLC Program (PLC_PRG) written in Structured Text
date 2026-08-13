@@ -1,0 +1,200 @@
+IF run = TRUE THEN
+	current_stage := 0;
+	level := 537;
+	run := FALSE;
+	dir := 0;
+	open_doors := FALSE;
+	TON_0(IN := start, PT := T#0.05S);
+	TON_1(IN := open_doors, PT := T#4S);
+	TON_2(IN := doors_move, PT := T#0.05S);
+	counter2 := 0;
+	counter := 0;
+	counter3 := 0;
+	left_door := 0;
+	right_door := 0;
+	sbr := TRUE;
+	cond := 0;
+	stage := 537;
+	prev_dir := 0;
+END_IF
+
+FOR i := 0 TO 4 BY 1 DO
+	IF prev_dir = 1 THEN
+		IF stages[i] = TRUE THEN
+			call_up[i] := stages[i];
+		END_IF
+	ELSIF prev_dir = 2 THEN
+		IF stages[i] = TRUE THEN
+			call_down[i] := stages[i];
+		END_IF
+	END_IF
+END_FOR
+
+IF dir = 0 AND (call_up[0] OR call_up[1] OR call_up[2] OR call_up[3] OR call_up[4]) THEN
+	dir := 1;
+ELSIF dir =0 AND (call_down[0] OR call_down[1] OR call_down[2] OR call_down[3] OR call_down[4]) THEN
+	dir := 2;
+ELSIF prev_dir = 1 THEN
+	dir := 1;
+ELSIF prev_dir = 2 THEN
+	dir := 2;
+END_IF
+
+
+
+TON_0(IN := start, PT := T#1S);
+
+IF dir = 1 THEN
+	FOR i := (4) TO 0 BY -1 DO 
+		IF call_up[i] = TRUE THEN
+			stage := 537- i*200;
+			WHILE current_stage <> i DO
+				WHILE level <> stage DO
+					start := TRUE;
+					TON_0(IN := start, PT := T#0.05S);
+					IF TON_0.Q AND level > stage THEN
+						level := level - 2;
+						counter := counter + 1;
+						start := FALSE;
+						TON_0(IN := start, PT := T#0.05S);
+						IF counter = 100 THEN
+							counter := 0;
+							current_stage := current_stage + 1;
+						END_IF
+						IF call_up[current_stage] = TRUE THEN
+							stage := level;
+							i := current_stage;
+						END_IF
+					ELSIF TON_0.Q AND level < stage THEN
+						level := level + 2;
+						counter := counter + 1;
+						start := FALSE;
+						TON_0(IN := start, PT := T#0.05S);
+						IF counter = 100 THEN
+							counter := 0;
+							current_stage := current_stage - 1;
+						END_IF
+						IF call_up[current_stage] = TRUE THEN
+							stage := level;
+							i := current_stage;
+						END_IF
+					END_IF
+					
+				END_WHILE
+				counter := 0;
+				counter2 := counter2 + 1;
+			END_WHILE
+			open_doors := TRUE;
+			WHILE counter3 < 50 DO
+				doors_move := TRUE;
+				TON_2(IN := doors_move, PT := T#0.05S);
+				IF TON_2.Q THEN
+					left_door := left_door - 1;
+					right_door := right_door + 1;
+					doors_move := FALSE;
+					TON_2(IN := doors_move, PT := T#0.05S);
+					counter3 := counter3 + 1;
+				END_IF
+				TON_2(IN := doors_move, PT := T#0.1S);
+			END_WHILE
+			counter3 := 0;
+			WHILE counter3 < 50 DO
+				doors_move := TRUE;
+				TON_2(IN := doors_move, PT := T#0.05S);
+				IF TON_2.Q THEN
+					left_door := left_door + 1;
+					right_door := right_door - 1;
+					doors_move := FALSE;
+					TON_2(IN := doors_move, PT := T#0.05S);
+					counter3 := counter3 + 1;
+				END_IF	
+			END_WHILE
+			counter3 := 0;	
+			open_doors := FALSE;
+			counter2 := 0;
+			call_up[i] := FALSE;
+			stages[i] := 0;
+		END_IF
+	END_FOR
+	prev_dir := 1;
+	dir := 0;
+ELSIF dir = 2 THEN
+	FOR i := 0 TO 4 BY 1 DO
+		IF call_down[i] = TRUE THEN
+			stage := 537- i*200;
+			WHILE current_stage <> i DO
+				
+				WHILE level <> stage DO
+					start := TRUE;
+					TON_0(IN := start, PT := T#0.05S);
+					IF TON_0.Q AND level < stage THEN
+						level := level + 2;
+						counter := counter + 1;
+						start := FALSE;
+						TON_0(IN := start, PT := T#0.05S);
+						IF counter = 100 THEN
+							counter := 0;
+							current_stage := current_stage - 1;
+						END_IF
+						IF call_up[current_stage] = TRUE THEN
+							stage := level;
+							i := current_stage;
+						END_IF
+					ELSIF TON_0.Q AND level > stage THEN
+						level := level - 2;
+						counter := counter + 1;
+						start := FALSE;
+						TON_0(IN := start, PT := T#0.05S);
+						IF counter = 100 THEN
+							counter := 0;
+							current_stage := current_stage + 1;
+						END_IF
+						IF call_up[current_stage] = TRUE THEN
+							stage := level;
+							i := current_stage;
+						END_IF
+					END_IF
+					
+				END_WHILE
+				
+				counter := 0;
+				current_stage := current_stage - 1;
+				counter2 := counter2 + 1;
+			END_WHILE
+			open_doors := TRUE;
+			WHILE counter3 < 50 DO
+				doors_move := TRUE;
+				TON_2(IN := doors_move, PT := T#0.05S);
+				IF TON_2.Q THEN
+					left_door := left_door - 1;
+					right_door := right_door + 1;
+					doors_move := FALSE;
+					TON_2(IN := doors_move, PT := T#0.05S);
+					counter3 := counter3 + 1;
+				END_IF
+				TON_2(IN := doors_move, PT := T#1S);
+			END_WHILE
+			counter3 := 0;
+			WHILE counter3 < 50 DO
+				doors_move := TRUE;
+				TON_2(IN := doors_move, PT := T#0.05S);
+				IF TON_2.Q THEN
+					left_door := left_door + 1;
+					right_door := right_door - 1;
+					doors_move := FALSE;
+					TON_2(IN := doors_move, PT := T#0.05S);
+					counter3 := counter3 + 1;
+				END_IF	
+			END_WHILE
+			counter3 := 0;	
+			open_doors := FALSE;
+			call_down[i] := FALSE;
+			stages[i] := 0;
+			counter2 := 0;
+		END_IF
+	END_FOR
+	prev_dir := 2;
+	dir := 0;
+END_IF
+
+
